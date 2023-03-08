@@ -1,8 +1,8 @@
 import React from "react";
 import { Card, CardActions, CardContent, CardMedia, Button, Typography } from "@material-ui/core";
-import ThumbUpAltIcon from '@material-ui/icons/ThumbUpAltIcon';
+//import ThumbUpAltIcon from '@material-ui/icons/ThumbUpAltIcon';
 import DeleteIcon from '@material-ui/icons/Delete';
-import MoreHorizIcon from '@material-ui/icons/MoreHorizIcon';
+//import MoreHorizIcon from '@material-ui/icons/MoreHorizIcon';
 import moment from 'moment'
 
 import useStyles from './styles';
@@ -18,7 +18,6 @@ const Post = ({ post }) => {
             </div>
             <div className={classes.overlay2}>
                 <Button style={{color: 'white'}} size="small" onClick={() => {}}></Button>
-                <MoreHorizIcon fontSize="default" />
             </div>
             <div className={classes.details}>
                 <Typography variant="body2" color="textSecondary">{post.tags.map((tag) => `#${tag} `)}</Typography>
@@ -28,7 +27,6 @@ const Post = ({ post }) => {
             </CardContent>
             <CardActions className={classes.cardActions}>
                 <Button size="small" color="primary" onClick={() => {}}>
-                    <ThumbUpAltIcon fontSize="small" />
                     Like
                     {post.likeCount}
                 </Button>
