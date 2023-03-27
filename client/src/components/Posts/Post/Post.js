@@ -1,11 +1,11 @@
 import React from "react";
 import { Card, CardActions, CardContent, CardMedia, Button, Typography } from "@material-ui/core";
 import DeleteIcon from '@material-ui/icons/Delete';
-import { FaEllipsisH } from "react-icons/fa";
+import { FaEllipsisH, FaThumbsUp } from "react-icons/fa";
 import moment from 'moment'
 import useStyles from './styles';
 import { useDispatch } from 'react-redux';
-import { deletePost } from "../../../actions/posts";
+import { deletePost, likePost } from "../../../actions/posts";
 
 const Post = ({ post, setCurrentId }) => {
     const classes = useStyles();
@@ -31,12 +31,12 @@ const Post = ({ post, setCurrentId }) => {
             </div>
                 <Typography className={classes.title} variant="h5" gutterButton>{post.title}</Typography>
             <CardContent>
-                <Typography variant="h5" gutterButton>{post.message}</Typography>
+                <Typography variant="h10" gutterButton>{post.message}</Typography>
             </CardContent>
             <CardActions className={classes.cardActions}>
-                <Button size="small" color="primary" onClick={() => {}}>
-                    Like
-                    {post.likeCount}
+                <Button size="small" color="primary" onClick={() => dispatch(likePost(post._id))}>
+                    <FaThumbsUp fontSize="small"/>
+                <p>&ensp;</p> {post.likedCount}
                 </Button>
                 <Button size="small" color="primary" onClick={() =>
                     dispatch(deletePost(post._id))}>
