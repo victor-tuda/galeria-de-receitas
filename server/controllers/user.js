@@ -1,49 +1,48 @@
-import bcrypt from 'bcryptjs';
-import jwt from 'jsonwebtoken';
+import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
 
-import User from '../models/user.js';
+import UserModal from "../models/user.js";
 
-export const sigIn = async(req, res) => {
-    const { email, password } = req.body;
+const secret = 'test';
 
-    try {
-        const existingUser = await User.findOne({email})
-        
-        if(!existingUser) return res.status(404).json({message:"Usuário não existe"});
+export const signin = async (req, res) => {
+  const { email, password } = req.body;
 
-        const isPasswordCorrect = await bcrypt.compare(password, existingUser.password)
+  try {
+    const oldUser = await UserModal.findOne({ email });
 
-        if (!isPasswordCorrect) return res.status(404).json({message: "Credenciais inválidas"})
+    if (!oldUser) return res.status(404).json({ message: "User doesn't exist" });
 
-        const token = jwt.sign({ email: existingUser.email, id: existingUser._id }, 'test', { expiresIn: "1h" });
+    const isPasswordCorrect = await bcrypt.compare(password, oldUser.password);
 
-        res.status(200).json({ result: existingUser, token })
-    } catch (error) {
-        res.status(500).json({message: "Algo deu errado"});
-    }
-}
+    if (!isPasswordCorrect) return res.status(400).json({ message: "Invalid credentials" });
 
-export const sigUp = async(req, res) => {
-    const {email, password, confirmPassword, firstName, lastName} = req.body;
+    const token = jwt.sign({ email: oldUser.email, id: oldUser._id }, secret, { expiresIn: "1h" });
 
-    try {
-        const existingUser = await User.findOne({email})
+    res.status(200).json({ result: oldUser, token });
+  } catch (err) {
+    res.status(500).json({ message: "Something went wrong" });
+  }
+};
 
-        if(existingUser) return res.status(400).json({message:"Usuário já existe"});
+export const signup = async (req, res) => {
+  const { email, password, firstName, lastName } = req.body;
 
-        if(password !== confirmPassword) return res.status(400).json({message:"Senhas não coincidem"});
+  try {
+    const oldUser = await UserModal.findOne({ email });
 
-        const hashedPassword = await bcrypt.hash(password, 12);
+    if (oldUser) return res.status(400).json({ message: "User already exists" });
 
-        const result = await User.create({email, password: hashedPassword, name: `${firstName} ${lastName}`});
+    const hashedPassword = await bcrypt.hash(password, 12);
 
-        const token = jwt.sign({email: result.email, id: existingUser._id}, 'test', { expiresIn: "1h"})
+    const result = await UserModal.create({ email, password: hashedPassword, name: `${firstName} ${lastName}` });
 
-        res.status(200).json({ result, token })
+    const token = jwt.sign( { email: result.email, id: result._id }, secret, { expiresIn: "1h" } );
 
-    } catch (error) {
-        res.status(500).json({message: "Algo deu errado"});
-    }
-
+    res.status(201).json({ result, token });
+  } catch (error) {
+    res.status(500).json({ message: "Something went wrong" });
     
-}
+    console.log(error);
+  }
+};
